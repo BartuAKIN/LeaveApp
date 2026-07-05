@@ -31,7 +31,8 @@ namespace LeaveApp.Business.Services
             if (user == null) return null;
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
             if (!result.Succeeded) return null;
-            return _tokenService.GenerateToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            return _tokenService.GenerateToken(user, roles);
         }
         public async Task<bool> Register(RegisterDto registerDto)
         {
@@ -44,6 +45,12 @@ namespace LeaveApp.Business.Services
                 UserName = registerDto.Email
             };
             var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+                if (result.Succeeded)
+                {
+                 await _userManager.AddToRoleAsync(user, "Employee");
+                }
+
             return result.Succeeded;
         }
     }

@@ -1,6 +1,7 @@
 using LeaveApp.Business.Interfaces;
 using LeaveApp.Business.Services;
 using LeaveApp.Data.Context;
+using LeaveApp.Data.Repositories;
 using LeaveApp.Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -44,11 +45,50 @@ builder.Services.AddAuthentication(options =>
 //services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
+builder.Services.AddScoped<ILeaveRequestService, LeaveRequestService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+    string[] roles = { "Empolyee", "Manager" };
+
+    foreach(var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole<int>(role));
+        }
+    }
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    if (await userManager.FindByEmailAsync("manager@leaveapp.com") == null)
+    {
+        var manager = new ApplicationUser
+        {
+            FirstName = "System",
+            LastName = "Yonetici",
+            DepartmentId = 2,
+            Email = "manager@leaveapp.com",
+            UserName = "manager@leaveapp.com",
+            IsManager = true,
+            IsActive = true,
+            EmailConfirmed = true
+        };
+
+        var createResult = await userManager.CreateAsync(manager, "Manager123!");
+        if (createResult.Succeeded)
+        {
+            await userManager.AddToRoleAsync(manager, "Manager");
+        }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
