@@ -48,7 +48,7 @@ namespace LeaveApp.Business.Services
 
                 if (result.Succeeded)
                 {
-                 await _userManager.AddToRoleAsync(user, "Employee");
+                 await _userManager.AddToRoleAsync(user, "Empolyee");
                 }
 
             return result.Succeeded;

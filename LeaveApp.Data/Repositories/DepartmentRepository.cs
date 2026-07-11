@@ -6,42 +6,10 @@ using System.Text;
 
 namespace LeaveApp.Data.Repositories
 {
-    public class DepartmentRepository : IDepartmentRepository
+    public class DepartmentRepository : GenericRepository<Department>, IDepartmentRepository
     {
-        private readonly AppDbContext _context;
-
-        public DepartmentRepository(AppDbContext context)
+        public DepartmentRepository(AppDbContext context) : base(context)
         {
-            _context = context;
-        }
-
-        public void Add(Department department)
-        {
-            _context.Departments.Add(department);
-            _context.SaveChanges();
-        }
-
-        public void Delete(int id)
-        {
-            var department = GetById(id);
-            _context.Departments.Remove(department);
-            _context.SaveChanges();
-        }
-
-        public List<Department> GetAll()
-        {
-            return _context.Departments.ToList();
-        }
-
-        public Department GetById(int id)
-        {
-            return _context.Departments.FirstOrDefault(x => x.Id == id);
-        }
-
-        public void Update(Department department)
-        {
-            _context.Departments.Update(department);
-            _context.SaveChanges();
         }
     }
 }

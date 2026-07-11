@@ -5,16 +5,8 @@ using System.Text;
 
 namespace LeaveApp.Data.Repositories
 {
-    public interface IDepartmentRepository
+    public interface IDepartmentRepository : IGenericRepository<Department>
     {
-        List<Department> GetAll();
 
-        Department GetById(int id);
-
-        void Add(Department department);
-
-        void Update(Department department);
-
-        void Delete(int id);
-    }
+    }  
 }
