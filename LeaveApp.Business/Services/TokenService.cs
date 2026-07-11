@@ -26,7 +26,8 @@ namespace LeaveApp.Business.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName)
+                new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName),
+                new Claim("IsManager", user.IsManager.ToString())
             };
 
             foreach (var role in roles)

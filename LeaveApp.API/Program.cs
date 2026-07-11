@@ -21,6 +21,11 @@ builder.Services.AddControllers();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("IsManager", policy =>
+        policy.RequireClaim("IsManager", "True"));
+});
 
 //JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -58,7 +63,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-    string[] roles = { "Empolyee", "Manager" };
+    string[] roles = { "User", "Admin" };
 
     foreach(var role in roles)
     {
@@ -87,7 +92,7 @@ using (var scope = app.Services.CreateScope())
         var createResult = await userManager.CreateAsync(manager, "Manager123!");
         if (createResult.Succeeded)
         {
-            await userManager.AddToRoleAsync(manager, "Manager");
+            await userManager.AddToRoleAsync(manager, "Admin");
         }
     }
 }

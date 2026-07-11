@@ -63,7 +63,7 @@ namespace LeaveApp.API.Controllers
         }
 
         [HttpGet("team")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetTeamLeaveRequests()
         {
             var managerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -80,7 +80,7 @@ namespace LeaveApp.API.Controllers
         }
 
         [HttpPut("{leaveRequestId}/status")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateLeaveRequestStatus(int leaveRequestId, UpdateLeaveRequestStatusDto updateLeaveRequestStatusDto)
         {
             var managerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

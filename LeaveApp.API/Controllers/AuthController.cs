@@ -19,7 +19,7 @@ namespace LeaveApp.API.Controllers
         }
 
         [HttpPost("register")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
             var result = await _authService.Register(registerDto);

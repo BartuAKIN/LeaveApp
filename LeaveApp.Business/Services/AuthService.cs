@@ -48,7 +48,7 @@ namespace LeaveApp.Business.Services
 
                 if (result.Succeeded)
                 {
-                var validRoles = new[] { "Manager", "Employee" };
+                var validRoles = new[] { "Admin", "User" };
                 if (!validRoles.Contains(registerDto.Role))
                 {
                     return false;

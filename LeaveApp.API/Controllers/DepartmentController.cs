@@ -52,7 +52,7 @@ public class DepartmentController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateDepartment([FromBody] CreateDepartmentDto createdDepartmentDto)
     {
         var result = await _departmentService.CreateDepartment(createdDepartmentDto);
@@ -66,7 +66,7 @@ public class DepartmentController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateDepartment(int id, [FromBody] CreateDepartmentDto createDepartmentDto)
     {
         var result = await _departmentService.UpdateDepartment(id, createDepartmentDto);
@@ -80,7 +80,7 @@ public class DepartmentController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteDepartment(int id)
     {
         var result = await _departmentService.DeleteDepartment(id);
