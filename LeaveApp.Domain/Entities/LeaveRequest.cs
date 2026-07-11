@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LeaveApp.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,7 +18,7 @@ namespace LeaveApp.Domain.Entities
 
         public string Description { get; set; }
 
-        public int Status { get; set; }
+        public LeaveStatus Status { get; set; }
 
         public int? ApprovedByUserId { get; set; }
 

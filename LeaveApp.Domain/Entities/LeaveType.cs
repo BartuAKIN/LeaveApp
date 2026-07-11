@@ -4,9 +4,8 @@ using System.Text;
 
 namespace LeaveApp.Domain.Entities
 {
-    public class LeaveType
+    public class LeaveType : BaseEntity
     {
-        public int Id {  get; set; }
 
         public string Name { get; set; }
 

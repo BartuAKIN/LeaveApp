@@ -91,7 +91,7 @@ namespace LeaveApp.Business.Services
                 });
             }
 
-            leaveRequest.Status = (int)newStatus;
+            leaveRequest.Status = newStatus;
             _leaveRequestRepository.Update(leaveRequest);
 
             return Task.FromResult(new ServiceResult<LeaveRequest>
