@@ -48,7 +48,12 @@ namespace LeaveApp.Business.Services
 
                 if (result.Succeeded)
                 {
-                 await _userManager.AddToRoleAsync(user, "Empolyee");
+                var validRoles = new[] { "Manager", "Employee" };
+                if (!validRoles.Contains(registerDto.Role))
+                {
+                    return false;
+                }
+                await _userManager.AddToRoleAsync(user, registerDto.Role);
                 }
 
             return result.Succeeded;

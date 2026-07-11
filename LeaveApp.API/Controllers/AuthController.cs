@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using LeaveApp.Business.DTOs;
 using LeaveApp.Business.Interfaces;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LeaveApp.API.Controllers
 {
@@ -17,6 +19,7 @@ namespace LeaveApp.API.Controllers
         }
 
         [HttpPost("register")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
             var result = await _authService.Register(registerDto);

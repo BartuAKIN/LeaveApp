@@ -4,9 +4,8 @@ using System.Text;
 
 namespace LeaveApp.Domain.Entities
 {
-    public class LeaveRequest
+    public class LeaveRequest : BaseEntity
     {
-        public int Id { get; set; }
 
         public int UserId { get; set; }
 
@@ -23,7 +22,5 @@ namespace LeaveApp.Domain.Entities
         public int? ApprovedByUserId { get; set; }
 
         public DateTime? DecisionDate { get; set; }
-
-        public DateTime CreatedDate { get; set; }
     }
 }
