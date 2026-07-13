@@ -1,0 +1,17 @@
+<div class="login-container">
+    <h2>LeaveApp Giriş</h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="email">E-posta</label>
+            <input id="email" type="email" formControlName="email" />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Şifre</label>
+            <input id="password" type="password" formControlName="password" />
+        </div>
+
+        <button type="submit">Giriş Yap</button>
+    </form>
+</div>
