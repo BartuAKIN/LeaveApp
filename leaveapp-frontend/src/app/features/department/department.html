@@ -1,0 +1,60 @@
+<div class="department-container">
+  <h2>Departman Listesi</h2>
+
+  <button (click)="toggleForm()">
+    {{ isFormOpen() ? 'İptal' : 'Yeni Departman Ekle' }}
+  </button>
+
+  @if (isFormOpen()) {
+    <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+      <div>
+        <label>Departman Adı:</label>
+        <input type="text" formControlName="name" />
+      </div>
+
+      @if (departmentForm.get('name')?.invalid && departmentForm.get('name')?.touched) {
+        <div style="color: red;">
+          Departman adı en az 2 karakter olmalı ve boş bırakılamaz.
+        </div>
+      }
+
+      <button type="submit">Kaydet</button>
+    </form>
+  }
+
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Departman Adı</th>
+        <th>Oluşturma Tarihi</th>
+        <th>İşlemler</th>
+      </tr>
+    </thead>
+   <tbody>
+      @for (dept of departments(); track dept.id) {
+        <tr>
+          <td>{{ dept.id }}</td>
+
+          @if (editingId() === dept.id) {
+            <td>
+              <input type="text" [formControl]="editForm.controls.name" />
+            </td>
+            <td>{{ dept.createdDate }}</td>
+            <td>
+              <button (click)="saveEdit(dept.id)">Kaydet</button>
+              <button (click)="cancelEdit()">İptal</button>
+            </td>
+          } @else {
+            <td>{{ dept.name }}</td>
+            <td>{{ dept.createdDate }}</td>
+            <td>
+              <button (click)="startEdit(dept)">Düzenle</button>
+              <button (click)="deleteDepartment(dept.id)">Sil</button>
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

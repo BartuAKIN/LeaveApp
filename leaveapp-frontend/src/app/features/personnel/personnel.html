@@ -1,0 +1,106 @@
+<div class="personnel-container">
+  <h2>Personel Listesi</h2>
+
+  <button (click)="toggleForm()">
+    {{ isFormOpen() ? 'İptal' : 'Yeni Personel Ekle' }}
+  </button>
+
+  @if (isFormOpen()) {
+    <form [formGroup]="personnelForm" (ngSubmit)="onSubmit()">
+      <div>
+        <label>Ad:</label>
+        <input type="text" formControlName="firstName" />
+      </div>
+
+      <div>
+        <label>Soyad:</label>
+        <input type="text" formControlName="lastName" />
+      </div>
+
+      <div>
+        <label>Email:</label>
+        <input type="email" formControlName="email" />
+      </div>
+
+      <div>
+        <label>Şifre:</label>
+        <input type="password" formControlName="password" />
+      </div>
+
+      <div>
+        <label>Departman:</label>
+        <select formControlName="departmentId">
+          <option [ngValue]="null">Seçiniz</option>
+          @for (dept of departments(); track dept.id) {
+            <option [ngValue]="dept.id">{{ dept.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label>
+          <input type="checkbox" formControlName="isManager" />
+          Yönetici mi?
+        </label>
+      </div>
+
+      <button type="submit">Kaydet</button>
+    </form>
+  }
+
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Ad Soyad</th>
+        <th>Email</th>
+        <th>Departman</th>
+        <th>Yönetici</th>
+        <th>Aktif</th>
+        <th>İşlemler</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (person of personnel(); track person.id) {
+        <tr>
+          <td>{{ person.id }}</td>
+
+          @if (editingId() === person.id) {
+            <td>
+              <input type="text" [formControl]="editForm.controls.firstName" placeholder="Ad" />
+              <input type="text" [formControl]="editForm.controls.lastName" placeholder="Soyad" />
+            </td>
+            <td>{{ person.email }}</td>
+            <td>
+              <select [formControl]="editForm.controls.departmentId">
+                @for (dept of departments(); track dept.id) {
+                  <option [ngValue]="dept.id">{{ dept.name }}</option>
+                }
+              </select>
+            </td>
+            <td>
+              <input type="checkbox" [formControl]="editForm.controls.isManager" />
+            </td>
+            <td>
+              <input type="checkbox" [formControl]="editForm.controls.isActive" />
+            </td>
+            <td>
+              <button (click)="saveEdit(person.id)">Kaydet</button>
+              <button (click)="cancelEdit()">İptal</button>
+            </td>
+          } @else {
+            <td>{{ person.firstName }} {{ person.lastName }}</td>
+            <td>{{ person.email }}</td>
+            <td>{{ getDepartmentName(person.departmentId) }}</td>
+            <td>{{ person.isManager ? 'Evet' : 'Hayır' }}</td>
+            <td>{{ person.isActive ? 'Evet' : 'Hayır' }}</td>
+            <td>
+              <button (click)="startEdit(person)">Düzenle</button>
+              <button (click)="deletePersonnel(person.id)">Sil</button>
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
