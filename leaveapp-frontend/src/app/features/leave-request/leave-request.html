@@ -1,0 +1,50 @@
+<div class="leave-request-container">
+    <h2>İzin Talep Ekranı</h2>
+
+    @if (successMessage()) {
+        <div style="color: green;">
+            {{ successMessage() }}
+        </div>
+    }
+
+    <button (click)="toggleForm()">
+        {{ isFormOpen() ? 'İptal' : 'Yeni İzin Talebi Oluştur' }}
+    </button>
+
+    @if (isFormOpen()) {
+        <form [formGroup]="leaveRequestForm" (ngSubmit)="onSubmit()">
+            <div>
+                <label>İzin Türü</label>
+                <select formControlName="leaveTypeId">
+                    <option [ngValue]="null">Seçiniz</option>
+                    @for (lt of leaveTypes(); track lt.id) {
+                        <option [ngValue]="lt.id">{{ lt.name }}</option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label>Başlangıç Tarihi</label>
+                <input type="date" formControlName="startDate" />
+            </div>
+
+            <div>
+                <label>Bitiş Tarihi</label>
+                <input type="date" formControlName="endDate" />
+            </div>
+
+            @if (leaveRequestForm.errors?.['dateRangeInvalid'] && leaveRequestForm.get('endDate')?.touched) {
+                <div style="color: red;">
+                    Bitiş tarihi başlangıç tarihinden küçük olamaz.
+                </div>
+            }
+
+            <div>
+                <label>Açıklama:</label>
+                <input type="text" formControlName="description" />
+            </div>
+
+            <button type="submit">Talep Oluştur</button>
+        </form>
+    }
+</div>
