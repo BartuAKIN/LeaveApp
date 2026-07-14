@@ -1,0 +1,60 @@
+<div class="leave-type-container">
+    <h2>İzin Türü Listesi</h2>
+
+    <button (click)="toggleForm()">
+        {{ isFormOpen() ? 'İptal' : 'Yeni İzin Türü Ekle' }}
+    </button>
+
+    @if (isFormOpen()) {
+        <form [formGroup]="leaveTypeForm" (ngSubmit)="onSubmit()">
+            <div>
+                 <label>İzin Türü Adı:</label>
+                 <input type="text" formControlName="name" />
+            </div>
+            <div>
+                <label>Açıklama:</label>
+                <input type="text" formControlName="description" />
+            </div>
+
+            <button type="submit">Kaydet</button>
+        </form>
+    }
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>İzin Türü Adı</th>
+                <th>Açıklama</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (lt of leaveTypes(); track lt.id) {
+                <tr>
+                    <td> {{ lt.id }}</td>
+
+                    @if (editingId() === lt.id) {
+                        <td>
+                            <input type="text" [formControl]="editForm.controls.name" />
+                        </td>
+                        <td>
+                            <input type="text" [formControl]="editForm.controls.description" />
+                        </td>
+                        <td>
+                            <button (click)="saveEdit(lt.id)">Kaydet</button>
+                            <button (click)="cancelEdit()">İptal</button>
+                        </td>
+                    } @else {
+                        <td>{{ lt.name }}</td>
+                        <td>{{ lt.description }}</td>
+                        <td>
+                            <button (click)="startEdit(lt)">Düzenle</button>
+                            <button (click)="deleteLeaveType(lt.id)">Sil</button>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
