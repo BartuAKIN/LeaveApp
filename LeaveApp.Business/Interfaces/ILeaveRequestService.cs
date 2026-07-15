@@ -15,7 +15,7 @@ namespace LeaveApp.Business.Interfaces
 
         Task<ServiceResult<List<LeaveRequest>>> GetMyLeaveRequests(int userId);
 
-        Task<ServiceResult<List<LeaveRequest>>> GetTeamLeaveRequests(int managerId);
+        Task<ServiceResult<List<LeaveRequestWithUserDto>>> GetTeamLeaveRequests(int managerId);
 
         Task<ServiceResult<LeaveRequest>> UpdateLeaveRequestStatus(int leaveRequestId, int managerId, LeaveStatus newStatus);
     }

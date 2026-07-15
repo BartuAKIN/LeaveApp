@@ -9,6 +9,7 @@ namespace LeaveApp.Domain.Entities
     {
 
         public int UserId { get; set; }
+        public ApplicationUser User { get; set;  }
 
         public int LeaveTypeId { get; set; }
 

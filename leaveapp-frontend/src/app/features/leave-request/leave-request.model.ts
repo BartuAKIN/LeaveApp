@@ -23,3 +23,16 @@ export interface ApiResponse<T> {
     message: string | null;
     data: T;
 }
+
+export interface LeaveRequestWithUser {
+    id: number;
+    userId: number;
+    userFullName: string;
+    leaveTypeId: number
+    startDate: string;
+    endDate: string;
+    description: string;
+    status: number;
+    approvedByUserId: number | null;
+    decisionDate: string | null;
+}

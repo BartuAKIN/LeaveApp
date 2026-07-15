@@ -56,13 +56,13 @@ namespace LeaveApp.Business.Services
             });
         }
 
-        public async Task<ServiceResult<List<LeaveRequest>>> GetTeamLeaveRequests(int managerId)
+        public async Task<ServiceResult<List<LeaveRequestWithUserDto>>> GetTeamLeaveRequests(int managerId)
         {
             var manager = await _userManager.FindByIdAsync(managerId.ToString());
 
             if (manager == null)
             {
-                return new ServiceResult<List<LeaveRequest>>
+                return new ServiceResult<List<LeaveRequestWithUserDto>>
                 {
                     Success = false,
                     Message = "Yönetici bulunamadı."
@@ -71,10 +71,24 @@ namespace LeaveApp.Business.Services
 
             var teamLeaveRequests = _leaveRequestRepository.GetByDepartmentId(manager.DepartmentId);
 
-            return new ServiceResult<List<LeaveRequest>>
+            var resultDtos = teamLeaveRequests.Select(lr => new LeaveRequestWithUserDto
+            {
+                Id = lr.Id,
+                UserId = lr.UserId,
+                UserFullName = lr.User != null ? $"{lr.User.FirstName} {lr.User.LastName}" : "-",
+                LeaveTypeId = lr.LeaveTypeId,
+                StartDate = lr.StartDate,
+                EndDate = lr.EndDate,
+                Description = lr.Description,
+                Status = lr.Status,
+                ApprovedByUserId = lr.ApprovedByUserId,
+                DecisionDate = lr.DecisionDate,
+            }).ToList();
+
+            return new ServiceResult<List<LeaveRequestWithUserDto>>
             {
                 Success = true,
-                Data = teamLeaveRequests
+                Data = resultDtos
             };
         }
 
@@ -92,6 +106,8 @@ namespace LeaveApp.Business.Services
             }
 
             leaveRequest.Status = newStatus;
+            leaveRequest.ApprovedByUserId = managerId;
+            leaveRequest.DecisionDate = DateTime.Now;
             _leaveRequestRepository.Update(leaveRequest);
 
             return Task.FromResult(new ServiceResult<LeaveRequest>

@@ -1,0 +1,35 @@
+<div>
+    <h2>İzin Onay Ekranı</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Personel</th>
+                <th>İzin Türü</th>
+                <th>Başlangıç Tarihi</th>
+                <th>Bitiş Tarihi</th>
+                <th>Açıklama</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (req of pendingRequests(); track req.id) {
+                <tr>
+                    <td>{{ req.userFullName }}</td>
+                    <td>{{ getLeaveTypeName(req.leaveTypeId) }}</td>
+                    <td>{{ req.startDate | date:'dd.MM.yyyy' }}</td>
+                    <td>{{ req.endDate | date:'dd.MM.yyyy' }}</td>
+                    <td>{{ req.description }}</td>
+                    <td>
+                        <button (click)="approve(req.id)">Onayla</button>
+                        <button (click)="reject(req.id)">Reddet</button>
+                    </td>
+                </tr>
+            } @empty {
+                <tr>
+                    <td colspan="6">Bekleyen izin talebi bulunmuyor.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

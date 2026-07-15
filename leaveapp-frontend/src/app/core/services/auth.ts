@@ -36,4 +36,27 @@ export class Auth {
         isLoggedIn(): boolean {
             return !!this.getToken();
         }
+
+        private decodeToken(): any | null {
+            const token = this.getToken();
+            if (!token) {
+                return null;
+            }
+            try {
+                const payload = token.split('.')[1];
+                const decoded = atob(payload);
+                return JSON.parse(decoded);
+            } catch {
+                return null;
+            }
+        }
+
+        isManager(): boolean {
+            const decoded = this.decodeToken();
+            if (!decoded) {
+                return false;
+            }
+            const isManagerClaim = decoded['IsManager'] ?? decoded['isManager'];
+            return isManagerClaim === 'True' || isManagerClaim === true || isManagerClaim === 'true';
+        }
 }

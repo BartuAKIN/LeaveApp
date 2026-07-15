@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using LeaveApp.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace LeaveApp.Data.Repositories
 {
@@ -17,6 +18,7 @@ namespace LeaveApp.Data.Repositories
         public List<LeaveRequest> GetByDepartmentId(int departmentId)
         {
             return _context.LeaveRequests
+                .Include(lr => lr.User)
                 .Where(lr => _context.Users.Any(u=> u.Id == lr.UserId && u.DepartmentId == departmentId))
                 .ToList();
         }

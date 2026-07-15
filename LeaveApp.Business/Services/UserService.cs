@@ -134,6 +134,17 @@ namespace LeaveApp.Business.Services
 
             await _userManager.UpdateAsync(user);
 
+            var isInAdminRole = await _userManager.IsInRoleAsync(user, "admin");
+
+            if (updateUserDto.IsManager && !isInAdminRole)
+            {
+                await _userManager.AddToRoleAsync(user, "admin");
+            }
+            else if (!updateUserDto.IsManager && isInAdminRole)
+            {
+                await _userManager.RemoveFromRoleAsync(user, "admin");
+            }
+
             var userDto = new UserDto
             {
                 Id = user.Id,

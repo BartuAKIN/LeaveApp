@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
 import { environment } from "../../../environments/environment";
-import { LeaveRequest, CreateLeaveRequest, ApiResponse } from "./leave-request.model";
+import { LeaveRequest, CreateLeaveRequest, ApiResponse, LeaveRequestWithUser } from "./leave-request.model";
 
 @Injectable({
     providedIn: 'root'
@@ -19,5 +19,13 @@ export class LeaveRequestApi {
 
     getMyLeaveRequests() {
         return this.http.get<LeaveRequest[]>(this.apiUrl)
+    }
+
+    getTeamLeaveRequests() {
+        return this.http.get<LeaveRequestWithUser[]>(`${this.apiUrl}/team`);
+    }
+
+    updateStatus(leaveRequestId: number, newStatus: number) {
+        return this.http.put<LeaveRequest>(`${this.apiUrl}/${leaveRequestId}/status`, { newStatus });
     }
 }
