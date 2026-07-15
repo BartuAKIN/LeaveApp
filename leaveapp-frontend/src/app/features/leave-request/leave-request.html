@@ -47,4 +47,30 @@
             <button type="submit">Talep Oluştur</button>
         </form>
     }
+    <h2>İzinlerim</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>İzin Türü</th>
+                <th>Başlangıç Tarihi</th>
+                <th>Bitiş Tarihi</th>
+                <th>Durum</th>
+                <th>Açıklama</th>
+                <th>Oluşturma Tarihi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (req of myLeaveRequests(); track req.id) {
+                <tr>
+                    <td>{{ getLeaveTypeName(req.leaveTypeId) }}</td>
+                    <td>{{ req.startDate | date:'dd.MM.yyyy' }}</td>
+                    <td>{{ req.endDate | date:'dd.MM.yyyy' }}</td>
+                    <td>{{ getStatusText(req.status) }}</td>
+                    <td>{{ req.description }}</td>
+                    <td>{{ req.createdDate | date:'dd.MM.yyyy HH:mm' }}</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

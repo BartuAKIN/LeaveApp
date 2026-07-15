@@ -1,10 +1,11 @@
 export interface LeaveRequest {
     id: number;
+    createdDate: string;
     userId: number;
     leaveTypeId: number;
     startDate: string;
     endDate: string;
-    description: PerformanceServerTiming;
+    description: string;
     status: number;
     approvedByUserId: number | null;
     decisionDate: string | null;

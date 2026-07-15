@@ -3,6 +3,9 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractContro
 import { LeaveRequestApi } from './leave-request.api';
 import { LeaveTypeApi } from '../leave-type/leave-type.api';
 import { LeaveType } from '../leave-type/leave-type.model';
+import { LeaveRequest } from './leave-request.model';
+import { LeaveTypeComponent } from '../leave-type/leave-type';
+import { CommonModule } from '@angular/common';
 
 function dateRangeValidator(group: AbstractControl): ValidationErrors | null {
   const start = group.get('startDate')?.value;
@@ -17,7 +20,7 @@ function dateRangeValidator(group: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-leave-request',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './leave-request.html',
   styleUrl: './leave-request.css',
 })
@@ -43,6 +46,30 @@ export class LeaveRequestComponent implements OnInit {
 
   ngOnInit() {
     this.loadLeaveTypes();
+    this.loadMyLeaveRequest();
+  }
+
+  myLeaveRequests = signal<LeaveRequest[]>([]);
+
+  getStatusText(status: number): string {
+    switch (status) {
+      case 0: return 'Bekliyor';
+      case 1: return 'Onaylandı';
+      case 2: return 'Reddedildi';
+      default: return 'Bilinmiyor'
+    }
+  }
+
+  getLeaveTypeName(leaveTypeId: number): string {
+    const lt = this.leaveTypes().find(l => l.id === leaveTypeId);
+    return lt ? lt.name : '-';
+  }
+
+  loadMyLeaveRequest() {
+    this.leaveRequestApi.getMyLeaveRequests().subscribe({
+      next: (data) => this.myLeaveRequests.set(data),
+      error: (err: any) => console.error('İzinlerim yüklenirken hara:', err),
+    });
   }
 
   loadLeaveTypes() {

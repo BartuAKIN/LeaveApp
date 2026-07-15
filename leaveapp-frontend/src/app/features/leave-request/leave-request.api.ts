@@ -18,7 +18,6 @@ export class LeaveRequestApi {
     }
 
     getMyLeaveRequests() {
-        return this.http.get<ApiResponse<LeaveRequest[]>>(this.apiUrl)
-        .pipe(map(response => response.data));
+        return this.http.get<LeaveRequest[]>(this.apiUrl)
     }
 }
