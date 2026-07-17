@@ -8,6 +8,7 @@ import { PersonnelComponent } from './features/personnel/personnel';
 import { LeaveTypeComponent } from './features/leave-type/leave-type';
 import { LeaveRequestComponent } from './features/leave-request/leave-request';
 import { Auth } from './core/services/auth';
+import { Dashboard } from './features/dashboard/dashboard';
 
 
 
@@ -19,4 +20,5 @@ export const routes: Routes = [
     { path: 'izin-turu', component: LeaveTypeComponent, canActivate: [authGuard]},
     { path: 'izin-talep', component: LeaveRequestComponent, canActivate: [authGuard]},
     { path: 'izin-onay', component: LeaveApproval, canActivate: [authGuard, managerGuard] },
+    { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
 ];

@@ -7,6 +7,7 @@ import { LeaveRequest } from './leave-request.model';
 import { LeaveTypeComponent } from '../leave-type/leave-type';
 import { CommonModule } from '@angular/common';
 
+
 function dateRangeValidator(group: AbstractControl): ValidationErrors | null {
   const start = group.get('startDate')?.value;
   const end = group.get ('endDate')?.value;

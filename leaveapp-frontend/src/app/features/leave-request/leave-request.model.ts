@@ -36,3 +36,14 @@ export interface LeaveRequestWithUser {
     approvedByUserId: number | null;
     decisionDate: string | null;
 }
+
+export interface LeaveTypeSummary {
+    leaveTypeName: string;
+    totalDays: number;
+}
+
+export interface AnnualLeaveSummary {
+    usedDays: number;
+    remainingDays: number;
+    totalQuota: number;
+}

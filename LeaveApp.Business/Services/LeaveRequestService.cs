@@ -16,11 +16,13 @@ namespace LeaveApp.Business.Services
     {
         private readonly ILeaveRequestRepository _leaveRequestRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILeaveTypeRepository _leaveTypeRepository;
 
-        public LeaveRequestService(ILeaveRequestRepository leaveRequestRepository, UserManager<ApplicationUser> userManager)
+        public LeaveRequestService(ILeaveRequestRepository leaveRequestRepository, UserManager<ApplicationUser> userManager, ILeaveTypeRepository leaveTypeRepository)
         {
             _leaveRequestRepository = leaveRequestRepository;
             _userManager = userManager;
+            _leaveTypeRepository = leaveTypeRepository;
         }
 
         public async Task<ServiceResult<LeaveRequest>> CreateLeaveRequest(int userId, CreateLeaveRequestDto createLeaveRequestDto)
@@ -114,6 +116,74 @@ namespace LeaveApp.Business.Services
             {
                 Success = true,
                 Data = leaveRequest
+            });
+        }
+
+        public Task<ServiceResult<List<LeaveTypeSummaryDto>>> GetMyLeaveSummary(int userId)
+        {
+            var myLeaveRequests = _leaveRequestRepository.GetByUserId(userId);
+
+            var approvedRequests = myLeaveRequests
+                .Where(lr => lr.Status == LeaveStatus.Approved)
+                .ToList();
+
+            var groupedByType = approvedRequests
+                .GroupBy(lr => lr.LeaveTypeId)
+                .Select(g => new
+                {
+                    LeaveTypeId = g.Key,
+                    TotalDays = g.Sum(lr => (lr.EndDate - lr.StartDate).Days + 1)
+                })
+                .ToList();
+
+            var resultDtos = new List<LeaveTypeSummaryDto>();
+
+            foreach (var group in groupedByType)
+            {
+                var leaveType = _leaveTypeRepository.GetById(group.LeaveTypeId);
+                resultDtos.Add(new LeaveTypeSummaryDto
+                {
+                    LeaveTypeName = leaveType != null ? leaveType.Name : "-",
+                    TotalDays = group.TotalDays
+                });
+            }
+
+            return Task.FromResult(new ServiceResult<List<LeaveTypeSummaryDto>>
+            {
+                Success = true,
+                Data = resultDtos
+            });
+        }
+
+        public Task<ServiceResult<AnnualLeaveSummaryDto>> GetMyAnnualSummary(int userId)
+        {
+            const int annualQuota = 14; // Şimdilik sabit; ileride kullanıcı bazlı/admin ayarlı kota olabilir
+
+            var myLeaveRequests = _leaveRequestRepository.GetByUserId(userId);
+
+            var allLeaveTypes = _leaveTypeRepository.GetAll();
+            var annualLeaveType = allLeaveTypes.FirstOrDefault(lt => lt.Name == "Yıllık İzin");
+
+            int usedDays = 0;
+
+            if (annualLeaveType != null)
+            {
+                usedDays = myLeaveRequests
+                    .Where(lr => lr.Status == LeaveStatus.Approved && lr.LeaveTypeId == annualLeaveType.Id)
+                    .Sum(lr => (lr.EndDate - lr.StartDate).Days + 1);
+            }
+
+            var summary = new AnnualLeaveSummaryDto
+            {
+                UsedDays = usedDays,
+                RemainingDays = Math.Max(annualQuota - usedDays, 0),
+                TotalQuota = annualQuota
+            };
+
+            return Task.FromResult(new ServiceResult<AnnualLeaveSummaryDto>
+            {
+                Success = true,
+                Data = summary
             });
         }
     }

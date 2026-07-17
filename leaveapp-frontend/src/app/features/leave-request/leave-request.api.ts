@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
 import { environment } from "../../../environments/environment";
-import { LeaveRequest, CreateLeaveRequest, ApiResponse, LeaveRequestWithUser } from "./leave-request.model";
+import { LeaveRequest, CreateLeaveRequest, ApiResponse, LeaveRequestWithUser, LeaveTypeSummary, AnnualLeaveSummary } from "./leave-request.model";
 
 @Injectable({
     providedIn: 'root'
@@ -27,5 +27,13 @@ export class LeaveRequestApi {
 
     updateStatus(leaveRequestId: number, newStatus: number) {
         return this.http.put<LeaveRequest>(`${this.apiUrl}/${leaveRequestId}/status`, { newStatus });
+    }
+
+    getMyLeaveSummary() {
+        return this.http.get<LeaveTypeSummary[]>(`${this.apiUrl}/my-summary`);
+    }
+
+    getMyAnnualSummary() {
+        return this.http.get<AnnualLeaveSummary>(`${this.apiUrl}/my-annual-summary`);
     }
 }

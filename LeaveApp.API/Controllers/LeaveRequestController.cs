@@ -79,6 +79,40 @@ namespace LeaveApp.API.Controllers
             return Ok(result.Data);
         }
 
+        [HttpGet("my-summary")]
+        [Authorize]
+        public async Task<IActionResult> GetMyLeaveSummary()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int userId = int.Parse(userIdClaim);
+
+            var result = await _leaveRequestService.GetMyLeaveSummary(userId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("my-annual-summary")]
+        [Authorize]
+        public async Task<IActionResult> GetMyAnnualSummar()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int userId = int.Parse(userIdClaim);
+
+            var result = await _leaveRequestService.GetMyAnnualSummary(userId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Data);
+        }
+
         [HttpPut("{leaveRequestId}/status")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateLeaveRequestStatus(int leaveRequestId, UpdateLeaveRequestStatusDto updateLeaveRequestStatusDto)
@@ -95,6 +129,7 @@ namespace LeaveApp.API.Controllers
 
             return Ok(result.Data);
         }
+
     }
 
 }
