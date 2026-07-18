@@ -1,106 +1,131 @@
-<div class="personnel-container">
-  <h2>Personel Listesi</h2>
-
-  <button (click)="toggleForm()">
-    {{ isFormOpen() ? 'İptal' : 'Yeni Personel Ekle' }}
-  </button>
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Personel Listesi</h2>
+    <button class="btn btn-primary" (click)="toggleForm()">
+      {{ isFormOpen() ? 'İptal' : 'Yeni Personel Ekle' }}
+    </button>
+  </div>
 
   @if (isFormOpen()) {
-    <form [formGroup]="personnelForm" (ngSubmit)="onSubmit()">
-      <div>
-        <label>Ad:</label>
-        <input type="text" formControlName="firstName" />
-      </div>
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <form [formGroup]="personnelForm" (ngSubmit)="onSubmit()">
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="form-label">Ad</label>
+              <input type="text" formControlName="firstName" class="form-control" />
+            </div>
 
-      <div>
-        <label>Soyad:</label>
-        <input type="text" formControlName="lastName" />
-      </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Soyad</label>
+              <input type="text" formControlName="lastName" class="form-control" />
+            </div>
 
-      <div>
-        <label>Email:</label>
-        <input type="email" formControlName="email" />
-      </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" formControlName="email" class="form-control" />
+            </div>
 
-      <div>
-        <label>Şifre:</label>
-        <input type="password" formControlName="password" />
-      </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Şifre</label>
+              <input type="password" formControlName="password" class="form-control" />
+            </div>
 
-      <div>
-        <label>Departman:</label>
-        <select formControlName="departmentId">
-          <option [ngValue]="null">Seçiniz</option>
-          @for (dept of departments(); track dept.id) {
-            <option [ngValue]="dept.id">{{ dept.name }}</option>
-          }
-        </select>
-      </div>
-
-      <div>
-        <label>
-          <input type="checkbox" formControlName="isManager" />
-          Yönetici mi?
-        </label>
-      </div>
-
-      <button type="submit">Kaydet</button>
-    </form>
-  }
-
-  <table>
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>Ad Soyad</th>
-        <th>Email</th>
-        <th>Departman</th>
-        <th>Yönetici</th>
-        <th>Aktif</th>
-        <th>İşlemler</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (person of personnel(); track person.id) {
-        <tr>
-          <td>{{ person.id }}</td>
-
-          @if (editingId() === person.id) {
-            <td>
-              <input type="text" [formControl]="editForm.controls.firstName" placeholder="Ad" />
-              <input type="text" [formControl]="editForm.controls.lastName" placeholder="Soyad" />
-            </td>
-            <td>{{ person.email }}</td>
-            <td>
-              <select [formControl]="editForm.controls.departmentId">
+            <div class="col-12 col-md-6">
+              <label class="form-label">Departman</label>
+              <select formControlName="departmentId" class="form-select">
+                <option [ngValue]="null">Seçiniz</option>
                 @for (dept of departments(); track dept.id) {
                   <option [ngValue]="dept.id">{{ dept.name }}</option>
                 }
               </select>
-            </td>
-            <td>
-              <input type="checkbox" [formControl]="editForm.controls.isManager" />
-            </td>
-            <td>
-              <input type="checkbox" [formControl]="editForm.controls.isActive" />
-            </td>
-            <td>
-              <button (click)="saveEdit(person.id)">Kaydet</button>
-              <button (click)="cancelEdit()">İptal</button>
-            </td>
-          } @else {
-            <td>{{ person.firstName }} {{ person.lastName }}</td>
-            <td>{{ person.email }}</td>
-            <td>{{ getDepartmentName(person.departmentId) }}</td>
-            <td>{{ person.isManager ? 'Evet' : 'Hayır' }}</td>
-            <td>{{ person.isActive ? 'Evet' : 'Hayır' }}</td>
-            <td>
-              <button (click)="startEdit(person)">Düzenle</button>
-              <button (click)="deletePersonnel(person.id)">Sil</button>
-            </td>
+            </div>
+
+            <div class="col-12 col-md-6 d-flex align-items-end">
+              <div class="form-check">
+                <input type="checkbox" formControlName="isManager" class="form-check-input" id="isManagerCheck" />
+                <label class="form-check-label" for="isManagerCheck">Yönetici mi?</label>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-success mt-3">Kaydet</button>
+        </form>
+      </div>
+    </div>
+  }
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Id</th>
+            <th>Ad Soyad</th>
+            <th>Email</th>
+            <th>Departman</th>
+            <th>Yönetici</th>
+            <th>Aktif</th>
+            <th>İşlemler</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (person of personnel(); track person.id) {
+            <tr>
+              <td>{{ person.id }}</td>
+
+              @if (editingId() === person.id) {
+                <td>
+                  <div class="d-flex gap-2">
+                    <input type="text" [formControl]="editForm.controls.firstName" placeholder="Ad" class="form-control form-control-sm" />
+                    <input type="text" [formControl]="editForm.controls.lastName" placeholder="Soyad" class="form-control form-control-sm" />
+                  </div>
+                </td>
+                <td>{{ person.email }}</td>
+                <td>
+                  <select [formControl]="editForm.controls.departmentId" class="form-select form-select-sm">
+                    @for (dept of departments(); track dept.id) {
+                      <option [ngValue]="dept.id">{{ dept.name }}</option>
+                    }
+                  </select>
+                </td>
+                <td>
+                  <input type="checkbox" [formControl]="editForm.controls.isManager" class="form-check-input" />
+                </td>
+                <td>
+                  <input type="checkbox" [formControl]="editForm.controls.isActive" class="form-check-input" />
+                </td>
+                <td>
+                  <button class="btn btn-success btn-sm me-2" (click)="saveEdit(person.id)">Kaydet</button>
+                  <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">İptal</button>
+                </td>
+              } @else {
+                <td>{{ person.firstName }} {{ person.lastName }}</td>
+                <td>{{ person.email }}</td>
+                <td>{{ getDepartmentName(person.departmentId) }}</td>
+                <td>
+                  @if (person.isManager) {
+                    <span class="badge text-bg-success">Evet</span>
+                  } @else {
+                    <span class="badge text-bg-secondary">Hayır</span>
+                  }
+                </td>
+                <td>
+                  @if (person.isActive) {
+                    <span class="badge text-bg-success">Evet</span>
+                  } @else {
+                    <span class="badge text-bg-danger">Hayır</span>
+                  }
+                </td>
+                <td>
+                  <button class="btn btn-outline-primary btn-sm me-2" (click)="startEdit(person)">Düzenle</button>
+                  <button class="btn btn-outline-danger btn-sm" (click)="deletePersonnel(person.id)">Sil</button>
+                </td>
+              }
+            </tr>
           }
-        </tr>
-      }
-    </tbody>
-  </table>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

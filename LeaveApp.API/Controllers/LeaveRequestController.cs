@@ -130,6 +130,40 @@ namespace LeaveApp.API.Controllers
             return Ok(result.Data);
         }
 
+        [HttpGet("team-bar-chart")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetTeamLeaveBarChart()
+        {
+            var managerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int managerId = int.Parse(managerIdClaim);
+
+            var result = await _leaveRequestService.GetTeamLeaveBarChart(managerId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("monthly-leave-count")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetMonthlyLeaveCount()
+        {
+            var managerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int managerId = int.Parse(managerIdClaim);
+
+            var result = await _leaveRequestService.GetMonthlyLeaveCount(managerId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Data);
+        }
+
     }
 
 }

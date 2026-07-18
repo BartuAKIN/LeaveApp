@@ -186,5 +186,117 @@ namespace LeaveApp.Business.Services
                 Data = summary
             });
         }
+
+        public Task<ServiceResult<List<TeamLeaveBarChartDto>>> GetTeamLeaveBarChart(int managerId)
+        {
+            var manager = _userManager.FindByIdAsync(managerId.ToString()).Result;
+
+            if (manager == null)
+            {
+                return Task.FromResult(new ServiceResult<List<TeamLeaveBarChartDto>>
+                {
+                    Success = false,
+                    Message = "Yönetici bulunamadı."
+                });
+            }
+
+            var teamLeaveRequests = _leaveRequestRepository.GetByDepartmentId(manager.DepartmentId);
+
+            var currentYear = DateTime.Now.Year;
+
+            var approvedThisYear = teamLeaveRequests
+                .Where(lr => lr.Status == LeaveStatus.Approved && lr.StartDate.Year == currentYear)
+                .ToList();
+
+            var groupedByUser = approvedThisYear.GroupBy(lr => lr.UserId);
+
+            var resultDtos = new List<TeamLeaveBarChartDto>();
+
+            foreach (var userGroup in groupedByUser)
+            {
+                var user = userGroup.First().User;
+
+                var groupedByType = userGroup
+                    .GroupBy(lr => lr.LeaveTypeId)
+                    .Select(g => new
+                    {
+                        LeaveTypeId = g.Key,
+                        TotalDays = g.Sum(lr => (lr.EndDate - lr.StartDate).Days + 1)
+                    })
+                    .ToList();
+
+                var breakdown = new List<LeaveTypeSummaryDto>();
+
+                foreach (var typeGroup in groupedByType)
+                {
+                    var leaveType = _leaveTypeRepository.GetById(typeGroup.LeaveTypeId);
+                    breakdown.Add(new LeaveTypeSummaryDto
+                    {
+                        LeaveTypeName = leaveType != null ? leaveType.Name : "-",
+                        TotalDays = typeGroup.TotalDays
+                    });
+                }
+
+                resultDtos.Add(new TeamLeaveBarChartDto
+                {
+                    UserFullName = user != null ? $"{user.FirstName} {user.LastName}" : "-",
+                    LeaveBreakdown = breakdown
+                });
+            }
+
+            return Task.FromResult(new ServiceResult<List<TeamLeaveBarChartDto>>
+            {
+                Success = true,
+                Data = resultDtos
+            });
+        }
+
+        public Task<ServiceResult<List<MonthlyLeaveCountDto>>> GetMonthlyLeaveCount(int managerId)
+        {
+            var manager = _userManager.FindByIdAsync(managerId.ToString()).Result;
+
+            if (manager == null)
+            {
+                return Task.FromResult(new ServiceResult<List<MonthlyLeaveCountDto>>
+                {
+                    Success = false,
+                    Message = "Yönetici bulunamadı."
+                });
+            }
+
+            var teamLeaveRequests = _leaveRequestRepository.GetByDepartmentId(manager.DepartmentId);
+
+            var currentYear = DateTime.Now.Year;
+
+            var approvedThisYear = teamLeaveRequests
+                .Where(lr => lr.Status == LeaveStatus.Approved && lr.StartDate.Year == currentYear)
+                .ToList();
+
+            var monthNames = new[]
+            {
+                "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+                "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+            };
+
+            var resultDtos = new List<MonthlyLeaveCountDto>();
+
+            for (int month = 1; month <= 12; month++)
+            {
+                var count = approvedThisYear.Count(lr => lr.StartDate.Month == month);
+
+                resultDtos.Add(new MonthlyLeaveCountDto
+                {
+                    Month = month,
+                    MonthName = monthNames[month - 1],
+                    TotalRequests = count
+                });
+            }
+
+            return Task.FromResult(new ServiceResult<List<MonthlyLeaveCountDto>>
+            {
+                Success = true,
+                Data = resultDtos
+            });
+        }
     }
 }

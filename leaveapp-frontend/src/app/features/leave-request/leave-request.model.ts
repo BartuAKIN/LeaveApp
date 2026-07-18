@@ -47,3 +47,19 @@ export interface AnnualLeaveSummary {
     remainingDays: number;
     totalQuota: number;
 }
+
+export interface LeaveTypeBreakdown {
+    leaveTypeName: string;
+    totalDays: number;
+}
+
+export interface TeamLeaveBarChart {
+    userFullName: string;
+    leaveBreakdown: LeaveTypeBreakdown[];
+}
+
+export interface MonthlyLeaveCount {
+    month: number;
+    monthName: string;
+    totalRequests: number;
+}

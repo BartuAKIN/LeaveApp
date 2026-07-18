@@ -1,76 +1,103 @@
-<div class="leave-request-container">
-    <h2>İzin Talep Ekranı</h2>
-
-    @if (successMessage()) {
-        <div style="color: green;">
-            {{ successMessage() }}
-        </div>
-    }
-
-    <button (click)="toggleForm()">
-        {{ isFormOpen() ? 'İptal' : 'Yeni İzin Talebi Oluştur' }}
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">İzin Talep Ekranı</h2>
+    <button class="btn btn-primary" (click)="toggleForm()">
+      {{ isFormOpen() ? 'İptal' : 'Yeni İzin Talebi Oluştur' }}
     </button>
+  </div>
 
-    @if (isFormOpen()) {
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (isFormOpen()) {
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
         <form [formGroup]="leaveRequestForm" (ngSubmit)="onSubmit()">
-            <div>
-                <label>İzin Türü</label>
-                <select formControlName="leaveTypeId">
-                    <option [ngValue]="null">Seçiniz</option>
-                    @for (lt of leaveTypes(); track lt.id) {
-                        <option [ngValue]="lt.id">{{ lt.name }}</option>
-                    }
-                </select>
+          <div class="row g-3">
+            <div class="col-12 col-md-4">
+              <label class="form-label">İzin Türü</label>
+              <select formControlName="leaveTypeId" class="form-select">
+                <option [ngValue]="null">Seçiniz</option>
+                @for (lt of leaveTypes(); track lt.id) {
+                  <option [ngValue]="lt.id">{{ lt.name }}</option>
+                }
+              </select>
             </div>
 
-            <div>
-                <label>Başlangıç Tarihi</label>
-                <input type="date" formControlName="startDate" />
+            <div class="col-12 col-md-4">
+              <label class="form-label">Başlangıç Tarihi</label>
+              <input type="date" formControlName="startDate" class="form-control" />
             </div>
 
-            <div>
-                <label>Bitiş Tarihi</label>
-                <input type="date" formControlName="endDate" />
-            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Bitiş Tarihi</label>
+              <input type="date" formControlName="endDate" class="form-control" />
 
-            @if (leaveRequestForm.errors?.['dateRangeInvalid'] && leaveRequestForm.get('endDate')?.touched) {
-                <div style="color: red;">
-                    Bitiş tarihi başlangıç tarihinden küçük olamaz.
+              @if (leaveRequestForm.errors?.['dateRangeInvalid'] && leaveRequestForm.get('endDate')?.touched) {
+                <div class="text-danger small mt-1">
+                  Bitiş tarihi başlangıç tarihinden küçük olamaz.
                 </div>
-            }
-
-            <div>
-                <label>Açıklama:</label>
-                <input type="text" formControlName="description" />
+              }
             </div>
 
-            <button type="submit">Talep Oluştur</button>
-        </form>
-    }
-    <h2>İzinlerim</h2>
+            <div class="col-12">
+              <label class="form-label">Açıklama</label>
+              <input type="text" formControlName="description" class="form-control" />
+            </div>
+          </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>İzin Türü</th>
-                <th>Başlangıç Tarihi</th>
-                <th>Bitiş Tarihi</th>
-                <th>Durum</th>
-                <th>Açıklama</th>
-                <th>Oluşturma Tarihi</th>
-            </tr>
+          <button type="submit" class="btn btn-success mt-3">Talep Oluştur</button>
+        </form>
+      </div>
+    </div>
+  }
+
+  <h4 class="mb-3">İzinlerim</h4>
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>İzin Türü</th>
+            <th>Başlangıç Tarihi</th>
+            <th>Bitiş Tarihi</th>
+            <th>Durum</th>
+            <th>Açıklama</th>
+            <th>Oluşturma Tarihi</th>
+          </tr>
         </thead>
         <tbody>
-            @for (req of myLeaveRequests(); track req.id) {
-                <tr>
-                    <td>{{ getLeaveTypeName(req.leaveTypeId) }}</td>
-                    <td>{{ req.startDate | date:'dd.MM.yyyy' }}</td>
-                    <td>{{ req.endDate | date:'dd.MM.yyyy' }}</td>
-                    <td>{{ getStatusText(req.status) }}</td>
-                    <td>{{ req.description }}</td>
-                    <td>{{ req.createdDate | date:'dd.MM.yyyy HH:mm' }}</td>
-                </tr>
-            }
+          @for (req of myLeaveRequests(); track req.id) {
+            <tr>
+              <td>{{ getLeaveTypeName(req.leaveTypeId) }}</td>
+              <td>{{ req.startDate | date:'dd.MM.yyyy' }}</td>
+              <td>{{ req.endDate | date:'dd.MM.yyyy' }}</td>
+              <td>
+  @switch (req.status) {
+    @case (0) {
+      <span class="badge text-bg-warning">Beklemede</span>
+    }
+    @case (1) {
+      <span class="badge text-bg-success">Onaylandı</span>
+    }
+    @case (2) {
+      <span class="badge text-bg-danger">Reddedildi</span>
+    }
+    @default {
+      <span class="badge text-bg-secondary">{{ getStatusText(req.status) }}</span>
+    }
+  }
+</td>
+              <td>{{ req.description }}</td>
+              <td>{{ req.createdDate | date:'dd.MM.yyyy HH:mm' }}</td>
+            </tr>
+          }
         </tbody>
-    </table>
+      </table>
+    </div>
+  </div>
 </div>

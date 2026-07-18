@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
 import { environment } from "../../../environments/environment";
-import { LeaveRequest, CreateLeaveRequest, ApiResponse, LeaveRequestWithUser, LeaveTypeSummary, AnnualLeaveSummary } from "./leave-request.model";
+import { LeaveRequest, CreateLeaveRequest, ApiResponse, LeaveRequestWithUser, LeaveTypeSummary, AnnualLeaveSummary, TeamLeaveBarChart, MonthlyLeaveCount } from "./leave-request.model";
 
 @Injectable({
     providedIn: 'root'
@@ -35,5 +35,13 @@ export class LeaveRequestApi {
 
     getMyAnnualSummary() {
         return this.http.get<AnnualLeaveSummary>(`${this.apiUrl}/my-annual-summary`);
+    }
+
+    getTeamLeaveBarChart() {
+        return this.http.get<TeamLeaveBarChart[]>(`${this.apiUrl}/team-bar-chart`);
+    }
+
+    getMonthlyLeaveCount() {
+        return this.http.get<MonthlyLeaveCount[]>(`${this.apiUrl}/monthly-leave-count`);
     }
 }

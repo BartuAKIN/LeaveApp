@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators} from '@angular/forms'
+import { Router } from '@angular/router';
 import { Auth } from '../../core/services/auth';
 
 @Component({
@@ -14,7 +15,9 @@ export class Login {
     password: new FormControl('', [Validators.required]),
   });
 
-  constructor(private authService: Auth) {}
+  constructor(
+    private authService: Auth,
+    private router: Router) {}
 
   onSubmit() {
     if (this.loginForm.invalid) {
@@ -27,6 +30,7 @@ export class Login {
     this.authService.login(email!,password!).subscribe({
       next: (response) => {
         console.log('Giriş başarılı', response);
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         console.error('Giriş hatası:', err);

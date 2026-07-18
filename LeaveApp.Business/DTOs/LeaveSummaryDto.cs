@@ -17,4 +17,19 @@ namespace LeaveApp.Business.DTOs
         public int RemainingDays { get; set; }
         public int TotalQuota { get; set; }
     }
+
+   public class TeamLeaveBarChartDto
+    {
+        public string UserFullName { get; set; }
+        public List<LeaveTypeSummaryDto> LeaveBreakdown { get; set; }
+    }
+
+    public class MonthlyLeaveCountDto
+    {
+        public int Month {  get; set; }
+
+        public string MonthName { get; set; }
+
+        public int TotalRequests { get; set; }
+    }
 }
