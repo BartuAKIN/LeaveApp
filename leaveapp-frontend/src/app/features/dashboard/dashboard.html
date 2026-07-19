@@ -1,0 +1,56 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-1">Dashboard</h2>
+      @if (userFullName) {
+        <p class="text-muted mb-0">Hoşgeldin, {{ userFullName }}</p>
+      }
+    </div>
+  </div>
+
+ <div class="row g-4 mb-4">
+  <div class="col-12 col-md-6 col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div style="position: relative; height: 300px; display: flex; justify-content: center;">
+          <canvas #leaveTypeChart></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-6 col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div style="position: relative; height: 300px; display: flex; justify-content: center;">
+          <canvas #annualChart></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (isManager) {
+  <div class="row g-4">
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div style="position: relative; height: 350px;">
+            <canvas #barChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div style="position: relative; height: 350px;">
+            <canvas #lineChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+</div>

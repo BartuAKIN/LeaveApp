@@ -2,10 +2,11 @@ import { Component, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { DepartmentApi } from './department-api';
 import { Department } from './department.model';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-department',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './department.html',
   styleUrl: './department.css',
 })

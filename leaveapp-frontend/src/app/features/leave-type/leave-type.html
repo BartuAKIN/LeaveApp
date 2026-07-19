@@ -1,60 +1,72 @@
-<div class="leave-type-container">
-    <h2>İzin Türü Listesi</h2>
-
-    <button (click)="toggleForm()">
-        {{ isFormOpen() ? 'İptal' : 'Yeni İzin Türü Ekle' }}
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">İzin Türü Listesi</h2>
+    <button class="btn btn-primary" (click)="toggleForm()">
+      {{ isFormOpen() ? 'İptal' : 'Yeni İzin Türü Ekle' }}
     </button>
+  </div>
 
-    @if (isFormOpen()) {
+  @if (isFormOpen()) {
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
         <form [formGroup]="leaveTypeForm" (ngSubmit)="onSubmit()">
-            <div>
-                 <label>İzin Türü Adı:</label>
-                 <input type="text" formControlName="name" />
-            </div>
-            <div>
-                <label>Açıklama:</label>
-                <input type="text" formControlName="description" />
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="form-label">İzin Türü Adı</label>
+              <input type="text" formControlName="name" class="form-control" />
             </div>
 
-            <button type="submit">Kaydet</button>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Açıklama</label>
+              <input type="text" formControlName="description" class="form-control" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-success mt-3">Kaydet</button>
         </form>
-    }
+      </div>
+    </div>
+  }
 
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>İzin Türü Adı</th>
-                <th>Açıklama</th>
-                <th>İşlemler</th>
-            </tr>
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Id</th>
+            <th>İzin Türü Adı</th>
+            <th>Açıklama</th>
+            <th>İşlemler</th>
+          </tr>
         </thead>
         <tbody>
-            @for (lt of leaveTypes(); track lt.id) {
-                <tr>
-                    <td> {{ lt.id }}</td>
+          @for (lt of leaveTypes(); track lt.id) {
+            <tr>
+              <td>{{ lt.id }}</td>
 
-                    @if (editingId() === lt.id) {
-                        <td>
-                            <input type="text" [formControl]="editForm.controls.name" />
-                        </td>
-                        <td>
-                            <input type="text" [formControl]="editForm.controls.description" />
-                        </td>
-                        <td>
-                            <button (click)="saveEdit(lt.id)">Kaydet</button>
-                            <button (click)="cancelEdit()">İptal</button>
-                        </td>
-                    } @else {
-                        <td>{{ lt.name }}</td>
-                        <td>{{ lt.description }}</td>
-                        <td>
-                            <button (click)="startEdit(lt)">Düzenle</button>
-                            <button (click)="deleteLeaveType(lt.id)">Sil</button>
-                        </td>
-                    }
-                </tr>
-            }
+              @if (editingId() === lt.id) {
+                <td>
+                  <input type="text" [formControl]="editForm.controls.name" class="form-control form-control-sm" />
+                </td>
+                <td>
+                  <input type="text" [formControl]="editForm.controls.description" class="form-control form-control-sm" />
+                </td>
+                <td>
+                  <button class="btn btn-success btn-sm me-2" (click)="saveEdit(lt.id)">Kaydet</button>
+                  <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">İptal</button>
+                </td>
+              } @else {
+                <td>{{ lt.name }}</td>
+                <td>{{ lt.description }}</td>
+                <td>
+                  <button class="btn btn-outline-primary btn-sm me-2" (click)="startEdit(lt)">Düzenle</button>
+                  <button class="btn btn-outline-danger btn-sm" (click)="deleteLeaveType(lt.id)">Sil</button>
+                </td>
+              }
+            </tr>
+          }
         </tbody>
-    </table>
+      </table>
+    </div>
+  </div>
 </div>

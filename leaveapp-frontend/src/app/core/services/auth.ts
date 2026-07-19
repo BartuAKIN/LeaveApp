@@ -59,4 +59,12 @@ export class Auth {
             const isManagerClaim = decoded['IsManager'] ?? decoded['isManager'];
             return isManagerClaim === 'True' || isManagerClaim === true || isManagerClaim === 'true';
         }
+
+        getUserFullName(): string | null {
+            const decoded = this.decodeToken();
+             if (!decoded) {
+                 return null;
+        }
+        return decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ?? null;
+    }
 }

@@ -95,6 +95,11 @@ namespace LeaveApp.Business.Services
 
             await _userManager.AddToRoleAsync(newUser, "User");
 
+            if (createUserDto.IsManager)
+            {
+                await _userManager.AddToRoleAsync(newUser, "Admin");
+            }
+
             var userDto = new UserDto
             {
                 Id = newUser.Id,
