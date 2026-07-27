@@ -9,6 +9,7 @@ using LeaveApp.Data.Repositories;
 using LeaveApp.Domain.Entities;
 using LeaveApp.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
+using System.Linq;
 
 namespace LeaveApp.Business.Services
 {
@@ -17,12 +18,14 @@ namespace LeaveApp.Business.Services
         private readonly ILeaveRequestRepository _leaveRequestRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILeaveTypeRepository _leaveTypeRepository;
+        private readonly IEmailService _emailService;
 
-        public LeaveRequestService(ILeaveRequestRepository leaveRequestRepository, UserManager<ApplicationUser> userManager, ILeaveTypeRepository leaveTypeRepository)
+        public LeaveRequestService(ILeaveRequestRepository leaveRequestRepository, UserManager<ApplicationUser> userManager, ILeaveTypeRepository leaveTypeRepository, IEmailService emailService)
         {
             _leaveRequestRepository = leaveRequestRepository;
             _userManager = userManager;
             _leaveTypeRepository = leaveTypeRepository;
+            _emailService = emailService;
         }
 
         public async Task<ServiceResult<LeaveRequest>> CreateLeaveRequest(int userId, CreateLeaveRequestDto createLeaveRequestDto)
@@ -39,6 +42,35 @@ namespace LeaveApp.Business.Services
                 };
 
             _leaveRequestRepository.Add(newLeaveRequest);
+
+            try
+            {
+                var employee = await _userManager.FindByIdAsync(userId.ToString());
+                var leaveType = _leaveTypeRepository.GetById(createLeaveRequestDto.LeaveTypeId);
+                var managers = await _userManager.GetUsersInRoleAsync("Admin");
+
+                var managerEmails = managers
+                    .Where(m => !string.IsNullOrEmpty(m.Email))
+                    .Select(m => m.Email!)
+                    .ToList();
+
+                Console.WriteLine($"DEBUG: Bulunan yönetici sayısı: {managerEmails.Count}, Emailler: {string.Join(", ", managerEmails)}");
+
+                var employeeFullName = employee != null ? $"{employee.FirstName} {employee.LastName}" : "Bilinmeyen Personel";
+                var leaveTypeName = leaveType != null ? leaveType.Name : "-";
+
+                await _emailService.SendNewLeaveRequestNotificationAsync(
+                    managerEmails,
+                    employeeFullName,
+                    leaveTypeName,
+                    newLeaveRequest.StartDate,
+                    newLeaveRequest.EndDate,
+                    newLeaveRequest.Description);
+            }
+            catch (Exception)
+            {
+
+            }
 
             return new ServiceResult<LeaveRequest>
             {
@@ -94,17 +126,17 @@ namespace LeaveApp.Business.Services
             };
         }
 
-        public Task<ServiceResult<LeaveRequest>> UpdateLeaveRequestStatus(int leaveRequestId, int managerId, LeaveStatus newStatus)
+        public async Task<ServiceResult<LeaveRequest>> UpdateLeaveRequestStatus(int leaveRequestId, int managerId, LeaveStatus newStatus)
         {
             var leaveRequest = _leaveRequestRepository.GetById(leaveRequestId);
 
             if (leaveRequest == null)
             {
-                return Task.FromResult(new ServiceResult<LeaveRequest>
+                return new ServiceResult<LeaveRequest>
                 {
                     Success = false,
                     Message = "Talep Bulunamadı"
-                });
+                };
             }
 
             leaveRequest.Status = newStatus;
@@ -112,11 +144,36 @@ namespace LeaveApp.Business.Services
             leaveRequest.DecisionDate = DateTime.Now;
             _leaveRequestRepository.Update(leaveRequest);
 
-            return Task.FromResult(new ServiceResult<LeaveRequest>
+            try
+            {
+                var employee = await _userManager.FindByIdAsync(leaveRequest.UserId.ToString());
+                var leaveType = _leaveTypeRepository.GetById(leaveRequest.LeaveTypeId);
+
+                if (employee != null && !string.IsNullOrEmpty(employee.Email))
+                {
+                    var employeeFullName = $"{employee.FirstName} {employee.LastName}";
+                    var leaveTypeName = leaveType != null ? leaveType.Name : "-";
+                    var isApproved = newStatus == LeaveStatus.Approved;
+
+                    await _emailService.SendLeaveStatusUpdateNotificationAsync(
+                        employee.Email,
+                        employeeFullName,
+                        leaveTypeName,
+                        leaveRequest.StartDate,
+                        leaveRequest.EndDate,
+                        isApproved);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return new ServiceResult<LeaveRequest>
             {
                 Success = true,
                 Data = leaveRequest
-            });
+            };
         }
 
         public Task<ServiceResult<List<LeaveTypeSummaryDto>>> GetMyLeaveSummary(int userId)
